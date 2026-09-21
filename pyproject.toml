@@ -7,7 +7,9 @@ authors = [
     { name = "Jerome397", email = "jerome.khater@net.usj.edu.lb" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pillow>=12.3.0",
+]
 
 [project.scripts]
 mlops2 = "mlops2:main"
