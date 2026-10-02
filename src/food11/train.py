@@ -4,9 +4,11 @@ from pathlib import Path
 import mlflow
 import mlflow.pytorch
 import torch
+
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
+
 from torchvision import datasets, transforms
 from torchvision.models import resnet18, ResNet18_Weights
 
@@ -16,37 +18,43 @@ from torchvision.models import resnet18, ResNet18_Weights
 # ---------------------------------------------------------
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Train ResNet18 on Food-11"
+    )
 
     parser.add_argument(
         "--dataset",
         choices=["processed", "mini"],
-        default="mini"
+        default="processed",
+        help="Use the full processed dataset or mini dataset",
     )
 
     parser.add_argument(
         "--epochs",
         type=int,
-        default=5
+        default=5,
+        help="Number of training epochs",
     )
 
     parser.add_argument(
         "--lr",
         type=float,
-        default=0.001
+        default=0.001,
+        help="Learning rate",
     )
 
     parser.add_argument(
         "--batch-size",
         type=int,
-        default=32
+        default=32,
+        help="Batch size",
     )
 
     return parser.parse_args()
 
 
 # ---------------------------------------------------------
-# Evaluate model
+# Evaluation
 # ---------------------------------------------------------
 
 def evaluate(model, loader, criterion, device):
@@ -57,7 +65,6 @@ def evaluate(model, loader, criterion, device):
     total = 0
 
     with torch.no_grad():
-
         for images, labels in loader:
 
             images = images.to(device)
@@ -65,13 +72,23 @@ def evaluate(model, loader, criterion, device):
 
             outputs = model(images)
 
-            loss = criterion(outputs, labels)
+            loss = criterion(
+                outputs,
+                labels
+            )
 
-            total_loss += loss.item() * images.size(0)
+            total_loss += (
+                loss.item() * images.size(0)
+            )
 
-            predictions = outputs.argmax(dim=1)
+            predictions = outputs.argmax(
+                dim=1
+            )
 
-            correct += (predictions == labels).sum().item()
+            correct += (
+                predictions == labels
+            ).sum().item()
+
             total += labels.size(0)
 
     average_loss = total_loss / total
@@ -81,26 +98,32 @@ def evaluate(model, loader, criterion, device):
 
 
 # ---------------------------------------------------------
-# Main training function
+# Main
 # ---------------------------------------------------------
 
 def main():
-
     args = parse_args()
 
     # -----------------------------------------------------
-    # MLflow setup
+    # MLflow configuration
     # -----------------------------------------------------
 
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    mlflow.set_experiment("food11")
+    mlflow.set_tracking_uri(
+        "http://127.0.0.1:5000"
+    )
+
+    mlflow.set_experiment(
+        "food11"
+    )
 
     # -----------------------------------------------------
     # Device
     # -----------------------------------------------------
 
     device = torch.device(
-        "cuda" if torch.cuda.is_available() else "cpu"
+        "cuda"
+        if torch.cuda.is_available()
+        else "cpu"
     )
 
     print(f"Using device: {device}")
@@ -109,61 +132,136 @@ def main():
     # Dataset path
     # -----------------------------------------------------
 
-    if args.dataset == "mini":
-        data_dir = Path("data/food11_processed_mini")
+    if args.dataset == "processed":
+        data_dir = Path(
+            "data/food11_processed"
+        )
     else:
-        data_dir = Path("data/food11_processed")
+        data_dir = Path(
+            "data/food11_processed_mini"
+        )
 
     train_dir = data_dir / "training"
     val_dir = data_dir / "validation"
     test_dir = data_dir / "evaluation"
 
     # -----------------------------------------------------
+    # Check folders
+    # -----------------------------------------------------
+
+    for folder in [
+        train_dir,
+        val_dir,
+        test_dir,
+    ]:
+        if not folder.exists():
+            raise FileNotFoundError(
+                f"Dataset folder not found: {folder}"
+            )
+
+    # -----------------------------------------------------
     # Image transforms
     # -----------------------------------------------------
 
     train_transform = transforms.Compose([
-        transforms.Resize((128, 128)),
+        transforms.Resize(
+            (128, 128)
+        ),
+
         transforms.RandomHorizontalFlip(),
+
         transforms.ToTensor(),
+
         transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
+            mean=[
+                0.485,
+                0.456,
+                0.406,
+            ],
+            std=[
+                0.229,
+                0.224,
+                0.225,
+            ],
+        ),
     ])
 
     eval_transform = transforms.Compose([
-        transforms.Resize((128, 128)),
+        transforms.Resize(
+            (128, 128)
+        ),
+
         transforms.ToTensor(),
+
         transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
+            mean=[
+                0.485,
+                0.456,
+                0.406,
+            ],
+            std=[
+                0.229,
+                0.224,
+                0.225,
+            ],
+        ),
     ])
 
     # -----------------------------------------------------
-    # Datasets
+    # ImageFolder datasets
     # -----------------------------------------------------
 
     train_dataset = datasets.ImageFolder(
         train_dir,
-        transform=train_transform
+        transform=train_transform,
     )
 
     val_dataset = datasets.ImageFolder(
         val_dir,
-        transform=eval_transform
+        transform=eval_transform,
     )
 
     test_dataset = datasets.ImageFolder(
         test_dir,
-        transform=eval_transform
+        transform=eval_transform,
     )
 
-    print(f"Classes: {train_dataset.classes}")
-    print(f"Training images: {len(train_dataset)}")
-    print(f"Validation images: {len(val_dataset)}")
-    print(f"Test images: {len(test_dataset)}")
+    print(
+        f"Classes: {train_dataset.classes}"
+    )
+
+    print(
+        f"Training images: {len(train_dataset)}"
+    )
+
+    print(
+        f"Validation images: {len(val_dataset)}"
+    )
+
+    print(
+        f"Test images: {len(test_dataset)}"
+    )
+
+    # -----------------------------------------------------
+    # Verify Food-11 classes
+    # -----------------------------------------------------
+
+    if len(train_dataset.classes) != 11:
+        raise RuntimeError(
+            "Expected 11 Food-11 classes, "
+            f"but found {len(train_dataset.classes)}: "
+            f"{train_dataset.classes}"
+        )
+
+    if train_dataset.classes != val_dataset.classes:
+        raise RuntimeError(
+            "Training and validation classes do not match."
+        )
+
+    if train_dataset.classes != test_dataset.classes:
+        raise RuntimeError(
+            "Training and evaluation classes do not match."
+        )
 
     # -----------------------------------------------------
     # DataLoaders
@@ -173,36 +271,42 @@ def main():
         train_dataset,
         batch_size=args.batch_size,
         shuffle=True,
-        num_workers=0
+        num_workers=0,
     )
 
     val_loader = DataLoader(
         val_dataset,
         batch_size=args.batch_size,
         shuffle=False,
-        num_workers=0
+        num_workers=0,
     )
 
     test_loader = DataLoader(
         test_dataset,
         batch_size=args.batch_size,
         shuffle=False,
-        num_workers=0
+        num_workers=0,
     )
 
     # -----------------------------------------------------
-    # Model
+    # ResNet18
     # -----------------------------------------------------
 
     weights = ResNet18_Weights.DEFAULT
 
-    model = resnet18(weights=weights)
+    model = resnet18(
+        weights=weights
+    )
 
-    number_of_features = model.fc.in_features
+    number_of_features = (
+        model.fc.in_features
+    )
 
+    # ResNet18 normally has 1000 outputs.
+    # Food-11 requires 11 outputs.
     model.fc = nn.Linear(
         number_of_features,
-        11
+        11,
     )
 
     model = model.to(device)
@@ -215,7 +319,7 @@ def main():
 
     optimizer = Adam(
         model.parameters(),
-        lr=args.lr
+        lr=args.lr,
     )
 
     # -----------------------------------------------------
@@ -224,7 +328,14 @@ def main():
 
     with mlflow.start_run() as run:
 
-        print(f"MLflow run ID: {run.info.run_id}")
+        print(
+            f"MLflow run ID: "
+            f"{run.info.run_id}"
+        )
+
+        # -------------------------------------------------
+        # Log parameters
+        # -------------------------------------------------
 
         mlflow.log_params({
             "dataset": args.dataset,
@@ -233,14 +344,16 @@ def main():
             "batch_size": args.batch_size,
             "model": "resnet18",
             "classes": 11,
-            "device": str(device)
+            "device": str(device),
         })
 
         # -------------------------------------------------
-        # Training loop
+        # Training
         # -------------------------------------------------
 
-        for epoch in range(args.epochs):
+        for epoch in range(
+            args.epochs
+        ):
 
             model.train()
 
@@ -256,81 +369,102 @@ def main():
 
                 outputs = model(images)
 
-                loss = criterion(outputs, labels)
+                loss = criterion(
+                    outputs,
+                    labels
+                )
 
                 loss.backward()
 
                 optimizer.step()
 
                 running_loss += (
-                    loss.item() * images.size(0)
+                    loss.item()
+                    * images.size(0)
                 )
 
-                total_samples += images.size(0)
+                total_samples += (
+                    images.size(0)
+                )
 
             train_loss = (
-                running_loss / total_samples
+                running_loss
+                / total_samples
             )
+
+            # ---------------------------------------------
+            # Validation
+            # ---------------------------------------------
 
             val_loss, val_accuracy = evaluate(
                 model,
                 val_loader,
                 criterion,
-                device
+                device,
             )
 
             # ---------------------------------------------
-            # Log metrics to MLflow
+            # Log metrics
             # ---------------------------------------------
 
             mlflow.log_metric(
                 "train_loss",
                 train_loss,
-                step=epoch
+                step=epoch,
             )
 
             mlflow.log_metric(
                 "val_loss",
                 val_loss,
-                step=epoch
+                step=epoch,
             )
 
             mlflow.log_metric(
                 "val_accuracy",
                 val_accuracy,
-                step=epoch
+                step=epoch,
             )
 
             print(
-                f"Epoch {epoch + 1}/{args.epochs} | "
-                f"Train loss: {train_loss:.4f} | "
-                f"Val loss: {val_loss:.4f} | "
-                f"Val accuracy: {val_accuracy:.4f}"
+                f"Epoch "
+                f"{epoch + 1}/{args.epochs} | "
+                f"Train loss: "
+                f"{train_loss:.4f} | "
+                f"Val loss: "
+                f"{val_loss:.4f} | "
+                f"Val accuracy: "
+                f"{val_accuracy:.4f}"
             )
 
         # -------------------------------------------------
-        # Test evaluation
+        # Final test evaluation
         # -------------------------------------------------
 
         test_loss, test_accuracy = evaluate(
             model,
             test_loader,
             criterion,
-            device
-        )
-
-        mlflow.log_metric(
-            "test_accuracy",
-            test_accuracy
+            device,
         )
 
         mlflow.log_metric(
             "test_loss",
-            test_loss
+            test_loss,
+        )
+
+        mlflow.log_metric(
+            "test_accuracy",
+            test_accuracy,
         )
 
         print(
-            f"Test accuracy: {test_accuracy:.4f}"
+            f"Test loss: "
+            f"{test_loss:.4f}"
+        )
+
+        print(
+            f"Test accuracy: "
+            f"{test_accuracy:.4f}"
         )
 
         # -------------------------------------------------
@@ -338,14 +472,27 @@ def main():
         # -------------------------------------------------
 
         model = model.cpu()
+        model.eval()
 
         mlflow.pytorch.log_model(
-            model,
-            name="model"
+            pytorch_model=model,
+            artifact_path="model",
+            serialization_format="pickle",
         )
 
-        print("Model logged to MLflow.")
+        print(
+            "Model logged to MLflow successfully."
+        )
 
+        print(
+            f"Finished MLflow run: "
+            f"{run.info.run_id}"
+        )
+
+
+# ---------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------
 
 if __name__ == "__main__":
     main()
