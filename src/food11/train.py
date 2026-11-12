@@ -99,6 +99,8 @@ def evaluate(model, loader, criterion, device):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args()
     if args.epochs < 1 or args.lr <= 0 or args.batch_size < 2:
         raise ValueError("epochs/lr must be positive; batch-size must be >= 2")

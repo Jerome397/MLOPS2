@@ -1,0 +1,9 @@
+{
+  "pr_url": "https://github.com/Jerome397/MLOPS2/pull/1",
+  "failing_sha": "1e6ee5d5be8403c85085a5761535026553cc5e19",
+  "mergeable_state": "blocked",
+  "required_checks": [
+    "test",
+    "smoke"
+  ]
+}
