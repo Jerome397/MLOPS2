@@ -22,6 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t food11-api:ci .
+      - name: Measure single-stage versus multi-stage images
+        run: |
+          docker build -f .github/Dockerfile.single-stage -t food11-api:single .
+          docker image inspect food11-api:ci food11-api:single --format '{{.RepoTags}} {{.Size}} bytes'
+          docker history food11-api:ci
+          multi=$(docker image inspect food11-api:ci --format '{{.Size}}')
+          single=$(docker image inspect food11-api:single --format '{{.Size}}')
+          echo "Multi-stage: $multi bytes; single-stage: $single bytes; saved: $((single-multi)) bytes" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Start container and probe health
         run: |
           docker run -d --name api -p 8000:8000 -e SKIP_MODEL=1 food11-api:ci

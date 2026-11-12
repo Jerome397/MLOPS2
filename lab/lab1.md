@@ -18,3 +18,5 @@ The existing GitHub repository is Jerome397/MLOPS2 (retained instead of creating
 The actual source dataset has 16,643 images: training 9,866, validation 3,430, evaluation 3,347. The previous repository pointer tracked only 18 files. The raw files are unchanged. Deterministic preprocessing produces RGB 128×128 ImageFolder directories, with up to 100 images per class per split in mini (rather than two).
 
 611 duplicate processed pixel images across splits were excluded, keeping evaluation first, validation second, training last. Full processed counts are training 9,566, validation 3,119, evaluation 3,347 (16,032 total). Mini has training 1,100, validation 1,096, evaluation 1,096 (3,292 total). Rice has 96 available unique validation/evaluation images, which satisfies both the <=100 mini requirement and the >=50 contract. See data_preparation.json for the exact class counts and excluded raw paths.
+
+The raw-only versus processed-snapshot checkout demonstration also passed in the temporary clone: processed folders disappeared under the raw pointer and returned after checking out the processed pointer. See dvc_checkout.json; the working dataset was not switched.

@@ -1,0 +1,27 @@
+{
+  "run_url": "https://github.com/Jerome397/MLOPS2/actions/runs/43229215608",
+  "sha": "92549711ec770a4fb6013d82db92cf1aecda67fc",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "test",
+      "conclusion": "success",
+      "started_at": "2026-11-12T13:39:18Z",
+      "completed_at": "2026-11-12T13:39:58Z",
+      "seconds": 40.0
+    },
+    {
+      "name": "smoke",
+      "conclusion": "success",
+      "started_at": "2026-11-12T13:40:04Z",
+      "completed_at": "2026-11-12T13:45:29Z",
+      "seconds": 325.0
+    },
+    {
+      "name": "push",
+      "conclusion": "skipped",
+      "started_at": "2026-11-12T13:45:30Z",
+      "completed_at": "2026-11-12T13:45:29Z"
+    }
+  ]
+}

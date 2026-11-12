@@ -19,3 +19,9 @@ The root compose file builds MLflow, inference and Streamlit; persists tracking 
 ## Clean startup
 
 Stop standalone MLflow if it occupies 5000. Run `docker compose up -d --build mlflow`, train/register a champion against localhost:5000, then `docker compose up -d --build`. A fresh Compose volume and the standalone mlflow.db are separate registries. HTTP artifact serving avoids inaccessible host-only artifact paths inside inference.
+
+## Executed integration results
+
+[Successful Linux-runner check](https://github.com/Jerome397/MLOPS2/actions/runs/43229215608) built all three images and verified their health, actual HTTP image prediction, startup retrieval of a registered model, moving champion from version 1 to 2, restarting inference, and preserving version 2/predictions after a complete Compose down/up cycle. CI seeds an explicitly synthetic untrained model to test wiring; it does not train or claim Food-11 accuracy. The actual locally trained champion was separately loaded through FastAPI and tested with a validation upload (inference_check.json).
+
+Local Docker Desktop cannot start because Windows rejects stale AF_UNIX socket files (error 1920). An inference runtime directory was archived without touching images/volumes. Startup then failed at the secrets-engine socket; automatic approval review rejected moving that secrets-related directory. It was left untouched. No factory reset, volume purge or Docker data deletion was performed. The Compose deployment is verified on GitHub; the laptop runs the real model through the localhost Python stack.

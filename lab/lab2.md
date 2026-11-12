@@ -15,3 +15,12 @@ The script uses pretrained ResNet18, replaces its head with 11 outputs, loads Im
 9. The best **final validation accuracy** among the controlled runs selects the initial champion. Its run ID and registered version are recorded in experiments.json. Test accuracy is reported independently and is not used to choose this initial best run.
 
 The first full-fine-tuning run achieved final validation accuracy 0.5000 and test accuracy 0.510036. A Windows terminal emoji encoding error occurred while closing that run, after the model and metrics had been saved. The console encoding was fixed and that completed run was marked finished; it is separate from the controlled frozen-backbone comparison.
+
+## Measured controlled comparison
+
+| Learning rate | Batch size | Validation accuracy | Test accuracy | Run ID |
+|---|---|---|---|---|
+| 0.01 | 32 | 63.8686% | 66.4234% | 0d739d2a1f6c429abb553752b9b23548 |
+| 0.001 | 32 | 67.7920% | 73.1752% | 48a88dead297420dbe52bdf7f58d4ee8 |
+| 0.0001 | 32 | 40.2372% | 40.8759% | 1dfb31446e86409cad361350d19eb00d |
+| 0.001 | 64 | 67.4270% | 72.8102% | ce8a31f532a847b7a7e1fb5811492432 |

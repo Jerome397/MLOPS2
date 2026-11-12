@@ -29,3 +29,12 @@ flowchart LR
   J --> K
   K --> L[Frontend calls healthy inference API]
 ```
+
+## Measured promotion outcomes
+
+Champion version 1 scored 73.1752% on 1,096 evaluation images. The two-standard-error margin was 2.6765 percentage points, so promotion required at least 75.8517%.
+
+- Version 2 (run aa6c4b98f9f645588badc6fd1d4ccb1c): accuracy 12.8650%; decision `set_as_challenger`.
+- Version 3 (run 922730140356497eb64f4cf134c96b8a): accuracy 73.1752%; decision `set_as_challenger`.
+
+Both failed to exceed the required threshold. Champion remains version 1; challenger now points to version 3. The actual mini-data duplicate experiment exited 1 as expected and its temporary copy was removed; see duplicate_check.txt.

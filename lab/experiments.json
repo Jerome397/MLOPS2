@@ -1,0 +1,130 @@
+{
+  "comparison": [
+    {
+      "run_id": "0d739d2a1f6c429abb553752b9b23548",
+      "params": {
+        "dataset": "mini",
+        "epochs": "5",
+        "lr": "0.01",
+        "batch_size": "32",
+        "model": "resnet18",
+        "classes": "11",
+        "test_size": "1096",
+        "dataset_hash": "888dc776c111153ef099df7bb3bff1d79fac70c127ef88195305ac866b39a8c7",
+        "seed": "42",
+        "freeze_backbone": "True",
+        "class_names": "[\"Bread\", \"Dairy product\", \"Dessert\", \"Egg\", \"Fried food\", \"Meat\", \"Noodles-Pasta\", \"Rice\", \"Seafood\", \"Soup\", \"Vegetable-Fruit\"]",
+        "device": "cpu"
+      },
+      "metrics": {
+        "train_loss": 0.45368503407998517,
+        "val_loss": 1.7308565819785542,
+        "val_accuracy": 0.6386861313868614,
+        "test_loss": 1.550777563213432,
+        "test_accuracy": 0.6642335766423357
+      }
+    },
+    {
+      "run_id": "48a88dead297420dbe52bdf7f58d4ee8",
+      "params": {
+        "dataset": "mini",
+        "epochs": "5",
+        "lr": "0.001",
+        "batch_size": "32",
+        "model": "resnet18",
+        "classes": "11",
+        "test_size": "1096",
+        "dataset_hash": "888dc776c111153ef099df7bb3bff1d79fac70c127ef88195305ac866b39a8c7",
+        "seed": "42",
+        "freeze_backbone": "True",
+        "class_names": "[\"Bread\", \"Dairy product\", \"Dessert\", \"Egg\", \"Fried food\", \"Meat\", \"Noodles-Pasta\", \"Rice\", \"Seafood\", \"Soup\", \"Vegetable-Fruit\"]",
+        "device": "cpu"
+      },
+      "metrics": {
+        "train_loss": 0.6680844218080694,
+        "val_loss": 0.9714933451074753,
+        "val_accuracy": 0.6779197080291971,
+        "test_loss": 0.8600359097884519,
+        "test_accuracy": 0.7317518248175182
+      }
+    },
+    {
+      "run_id": "1dfb31446e86409cad361350d19eb00d",
+      "params": {
+        "dataset": "mini",
+        "epochs": "5",
+        "lr": "0.0001",
+        "batch_size": "32",
+        "model": "resnet18",
+        "classes": "11",
+        "test_size": "1096",
+        "dataset_hash": "888dc776c111153ef099df7bb3bff1d79fac70c127ef88195305ac866b39a8c7",
+        "seed": "42",
+        "freeze_backbone": "True",
+        "class_names": "[\"Bread\", \"Dairy product\", \"Dessert\", \"Egg\", \"Fried food\", \"Meat\", \"Noodles-Pasta\", \"Rice\", \"Seafood\", \"Soup\", \"Vegetable-Fruit\"]",
+        "device": "cpu"
+      },
+      "metrics": {
+        "train_loss": 1.861133483539928,
+        "val_loss": 1.84599179334014,
+        "val_accuracy": 0.4023722627737226,
+        "test_loss": 1.8091715939723663,
+        "test_accuracy": 0.40875912408759124
+      }
+    },
+    {
+      "run_id": "ce8a31f532a847b7a7e1fb5811492432",
+      "params": {
+        "dataset": "mini",
+        "epochs": "5",
+        "lr": "0.001",
+        "batch_size": "64",
+        "model": "resnet18",
+        "classes": "11",
+        "test_size": "1096",
+        "dataset_hash": "888dc776c111153ef099df7bb3bff1d79fac70c127ef88195305ac866b39a8c7",
+        "seed": "42",
+        "freeze_backbone": "True",
+        "class_names": "[\"Bread\", \"Dairy product\", \"Dessert\", \"Egg\", \"Fried food\", \"Meat\", \"Noodles-Pasta\", \"Rice\", \"Seafood\", \"Soup\", \"Vegetable-Fruit\"]",
+        "device": "cpu"
+      },
+      "metrics": {
+        "train_loss": 0.7961444414745678,
+        "val_loss": 1.0078924024192086,
+        "val_accuracy": 0.6742700729927007,
+        "test_loss": 0.9079353574418674,
+        "test_accuracy": 0.7281021897810219
+      }
+    }
+  ],
+  "initial_champion": {
+    "run_id": "48a88dead297420dbe52bdf7f58d4ee8",
+    "version": "1"
+  },
+  "candidates": [
+    {
+      "run_id": "aa6c4b98f9f645588badc6fd1d4ccb1c",
+      "version": "2",
+      "tags": {
+        "promotion_decision": "set_as_challenger",
+        "candidate_test_accuracy": "0.128650",
+        "champion_test_accuracy": "0.731752",
+        "test_size": "1096",
+        "two_standard_errors": "0.026765",
+        "required_accuracy": "0.758517"
+      }
+    },
+    {
+      "run_id": "922730140356497eb64f4cf134c96b8a",
+      "version": "3",
+      "tags": {
+        "promotion_decision": "set_as_challenger",
+        "candidate_test_accuracy": "0.731752",
+        "champion_test_accuracy": "0.731752",
+        "test_size": "1096",
+        "two_standard_errors": "0.026765",
+        "required_accuracy": "0.758517"
+      }
+    }
+  ]
+}
