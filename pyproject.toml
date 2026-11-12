@@ -1,7 +1,7 @@
 [project]
 name = "mlops2"
 version = "0.1.0"
-description = "Add your description here"
+description = "Food-11 data preparation, MLflow training, serving and CI/CD labs"
 readme = "README.md"
 authors = [
     { name = "Jerome397", email = "jerome.khater@net.usj.edu.lb" }
@@ -16,6 +16,10 @@ dependencies = [
     "torch>=2.14.0",
     "torchvision>=0.29.0",
     "uvicorn>=0.53.0",
+    "numpy>=2.2",
+    "dvc>=3.60",
+    "requests>=2.32",
+    "streamlit>=1.40",
 ]
 
 [project.scripts]
@@ -31,3 +35,21 @@ dev = [
     "pytest>=9.2.0",
     "ruff>=0.17.4",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.uv]
+link-mode = "copy"
+
+[tool.ruff]
+line-length = 100

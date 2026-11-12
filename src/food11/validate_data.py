@@ -5,7 +5,6 @@ from pathlib import Path
 
 from PIL import Image
 
-
 CLASSES = [
     "Bread",
     "Dairy product",
@@ -40,20 +39,12 @@ def print_result(
     passed: bool,
     details: str = "",
 ):
-    status = (
-        "PASS"
-        if passed
-        else "FAIL"
-    )
+    status = "PASS" if passed else "FAIL"
 
-    message = (
-        f"{status} - {name}"
-    )
+    message = f"{status} - {name}"
 
     if details:
-        message += (
-            f": {details}"
-        )
+        message += f": {details}"
 
     print(message)
 
@@ -67,11 +58,7 @@ def image_files(
     return [
         path
         for path in folder.iterdir()
-        if (
-            path.is_file()
-            and path.suffix.lower()
-            in IMAGE_EXTENSIONS
-        )
+        if (path.is_file() and path.suffix.lower() in IMAGE_EXTENSIONS)
     ]
 
 
@@ -80,19 +67,12 @@ def check_folders(
 ):
     passed = True
 
-    expected = set(
-        CLASSES
-    )
+    expected = set(CLASSES)
 
     for split in SPLITS:
-
-        split_dir = (
-            root
-            / split
-        )
+        split_dir = root / split
 
         if not split_dir.exists():
-
             passed = False
 
             print_result(
@@ -103,29 +83,16 @@ def check_folders(
 
             continue
 
-        actual = {
-            path.name
-            for path
-            in split_dir.iterdir()
-            if path.is_dir()
-        }
+        actual = {path.name for path in split_dir.iterdir() if path.is_dir()}
 
-        split_ok = (
-            actual == expected
-        )
+        split_ok = actual == expected
 
-        passed = (
-            passed
-            and split_ok
-        )
+        passed = passed and split_ok
 
         print_result(
             f"{split} folders",
             split_ok,
-            (
-                f"{len(actual)} "
-                f"class folders"
-            ),
+            (f"{len(actual)} class folders"),
         )
 
     return passed
@@ -140,37 +107,19 @@ def check_images(
 
     for split in SPLITS:
         for class_name in CLASSES:
+            folder = root / split / class_name
 
-            folder = (
-                root
-                / split
-                / class_name
-            )
-
-            for path in image_files(
-                folder
-            ):
-
+            for path in image_files(folder):
                 try:
-
-                    with Image.open(
-                        path
-                    ) as img:
-
+                    with Image.open(path) as img:
                         img.load()
 
-                        valid = (
-                            img.mode == "RGB"
-                            and img.size
-                            == (128, 128)
-                        )
+                        valid = img.mode == "RGB" and img.size == (128, 128)
 
-                except Exception:
-
+                except (OSError, ValueError, Image.DecompressionBombError):
                     valid = False
 
                 if not valid:
-
                     passed = False
 
                     print(
@@ -183,10 +132,7 @@ def check_images(
     print_result(
         "image format",
         passed,
-        (
-            f"{checked} images "
-            f"checked"
-        ),
+        (f"{checked} images checked"),
     )
 
     return passed
@@ -200,17 +146,9 @@ def check_minimum(
 
     for split in SPLITS:
         for class_name in CLASSES:
-
-            count = len(
-                image_files(
-                    root
-                    / split
-                    / class_name
-                )
-            )
+            count = len(image_files(root / split / class_name))
 
             if count < minimum:
-
                 passed = False
 
                 print(
@@ -223,9 +161,7 @@ def check_minimum(
     print_result(
         "minimum images per class",
         passed,
-        (
-            f"minimum={minimum}"
-        ),
+        (f"minimum={minimum}"),
     )
 
     return passed
@@ -240,36 +176,15 @@ def check_duplicates(
 
     for split in SPLITS:
         for class_name in CLASSES:
+            folder = root / split / class_name
 
-            folder = (
-                root
-                / split
-                / class_name
-            )
-
-            for path in image_files(
-                folder
-            ):
-
-                digest = (
-                    hashlib
-                    .md5(
-                        path.read_bytes()
-                    )
-                    .hexdigest()
-                )
+            for path in image_files(folder):
+                digest = hashlib.md5(path.read_bytes()).hexdigest()
 
                 if digest in seen:
+                    old_split, old_path = seen[digest]
 
-                    old_split, old_path = (
-                        seen[digest]
-                    )
-
-                    if (
-                        old_split
-                        != split
-                    ):
-
+                    if old_split != split:
                         passed = False
 
                         print(
@@ -280,7 +195,6 @@ def check_duplicates(
                         )
 
                 else:
-
                     seen[digest] = (
                         split,
                         path,
@@ -304,32 +218,16 @@ def class_shares(
     total = 0
 
     for class_name in CLASSES:
+        count = len(image_files(root / split / class_name))
 
-        count = len(
-            image_files(
-                root
-                / split
-                / class_name
-            )
-        )
-
-        counts[
-            class_name
-        ] = count
+        counts[class_name] = count
 
         total += count
 
     if total == 0:
-        return {
-            class_name: 0.0
-            for class_name in CLASSES
-        }
+        return {class_name: 0.0 for class_name in CLASSES}
 
-    return {
-        class_name:
-        counts[class_name] / total
-        for class_name in CLASSES
-    }
+    return {class_name: counts[class_name] / total for class_name in CLASSES}
 
 
 def check_distribution(
@@ -350,14 +248,9 @@ def check_distribution(
     passed = True
 
     for class_name in CLASSES:
-
-        difference = abs(
-            train_shares[class_name]
-            - val_shares[class_name]
-        )
+        difference = abs(train_shares[class_name] - val_shares[class_name])
 
         if difference > tau:
-
             passed = False
 
             print(
@@ -407,16 +300,12 @@ def main():
 
     results = [
         check_folders(root),
-
         check_images(root),
-
         check_minimum(
             root,
             args.min_per_class,
         ),
-
         check_duplicates(root),
-
         check_distribution(
             root,
             args.tau,
@@ -426,16 +315,11 @@ def main():
     print()
 
     if all(results):
-
-        print(
-            "Dataset contract: PASS"
-        )
+        print("Dataset contract: PASS")
 
         sys.exit(0)
 
-    print(
-        "Dataset contract: FAIL"
-    )
+    print("Dataset contract: FAIL")
 
     sys.exit(1)
 

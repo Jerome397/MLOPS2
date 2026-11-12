@@ -1,4 +1,6 @@
 [core]
-    remote = origin
+    remote = local
 ['remote "origin"']
     url = https://dagshub.com/khaterjerome/MLOPS2.dvc
+['remote "local"']
+    url = C:/Users/user/OneDrive/Desktop/MLOPS1-dvc-storage
