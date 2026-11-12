@@ -25,9 +25,9 @@ Run `powershell -ExecutionPolicy Bypass -File scripts/start_local.ps1`. It start
 - API documentation: http://127.0.0.1:8000/docs
 - Frontend: http://127.0.0.1:8502 (8501 already belongs to another project)
 
-## Machine limitation
+## Docker recovery
 
-Docker Desktop fails before its Linux engine starts with a Windows error 1920 on stale runtime socket objects, then the secrets-engine socket. Automatic approval review rejected moving the secrets-engine directory because of its shared secrets/credential role. It was left untouched; persistent Docker data was not reset or purged. Container and Compose behavior was verified on GitHub's Linux runner instead. A manual Docker repair/restart may still be needed for local Compose operation.
+Docker Desktop initially failed with Windows error 1920 on stale AF_UNIX runtime sockets. After a metadata-only check proved the affected directories held only zero-byte IPC sockets and no credentials, guarded in-place backups of those exact runtime directories were approved and Docker engine 29.4.0 started successfully. Persistent Docker images/volumes were preserved; no factory reset or prune was performed.
 
 ## Storage and reproducibility
 

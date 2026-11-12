@@ -24,3 +24,5 @@ The first full-fine-tuning run achieved final validation accuracy 0.5000 and tes
 | 0.001 | 32 | 67.7920% | 73.1752% | 48a88dead297420dbe52bdf7f58d4ee8 |
 | 0.0001 | 32 | 40.2372% | 40.8759% | 1dfb31446e86409cad361350d19eb00d |
 | 0.001 | 64 | 67.4270% | 72.8102% | ce8a31f532a847b7a7e1fb5811492432 |
+
+The measured pattern is strongest at lr=0.001: it beat both 0.01 and 0.0001 at batch 32. Raising batch size to 64 slightly reduced final validation accuracy (67.79% to 67.43%). These are observations for this fixed mini dataset and seed.

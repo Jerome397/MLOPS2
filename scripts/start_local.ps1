@@ -29,7 +29,7 @@ function Wait-LocalHealth($url) {
     }
     throw "Service did not become healthy: $url. Check the logs directory."
 }
-Start-LocalService 'mlflow' 5000 @('-m','mlflow','server','--host','127.0.0.1','--port','5000','--workers','1','--backend-store-uri','sqlite:///mlflow.db','--serve-artifacts','--artifacts-destination','./mlruns')
+Start-LocalService 'mlflow' 5000 @('-m','mlflow','server','--host','127.0.0.1','--port','5000','--workers','1','--backend-store-uri','sqlite:///mlflow.db','--serve-artifacts','--artifacts-destination','./mlruns','--allowed-hosts','localhost:5000,127.0.0.1:5000,host.docker.internal:5000')
 Wait-LocalHealth 'http://127.0.0.1:5000/health'
 Start-LocalService 'inference' 8000 @('-m','uvicorn','src.food11.serve:app','--host','127.0.0.1','--port','8000')
 Wait-LocalHealth 'http://127.0.0.1:8000/health'

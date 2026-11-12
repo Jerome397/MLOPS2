@@ -24,4 +24,16 @@ Stop standalone MLflow if it occupies 5000. Run `docker compose up -d --build ml
 
 [Successful Linux-runner check](https://github.com/Jerome397/MLOPS2/actions/runs/43229215608) built all three images and verified their health, actual HTTP image prediction, startup retrieval of a registered model, moving champion from version 1 to 2, restarting inference, and preserving version 2/predictions after a complete Compose down/up cycle. CI seeds an explicitly synthetic untrained model to test wiring; it does not train or claim Food-11 accuracy. The actual locally trained champion was separately loaded through FastAPI and tested with a validation upload (inference_check.json).
 
-Local Docker Desktop cannot start because Windows rejects stale AF_UNIX socket files (error 1920). An inference runtime directory was archived without touching images/volumes. Startup then failed at the secrets-engine socket; automatic approval review rejected moving that secrets-related directory. It was left untouched. No factory reset, volume purge or Docker data deletion was performed. The Compose deployment is verified on GitHub; the laptop runs the real model through the localhost Python stack.
+Docker Desktop initially failed with Windows error 1920 on stale runtime sockets. A metadata-only inspection proved the affected directories contained only zero-byte IPC sockets, without credentials. A guarded, reversible backup of those exact runtime directories was then approved and restored engine 29.4.0. No factory reset, volume purge or deletion of persistent Docker data was performed.
+
+## Local side-by-side deployment
+
+The localhost training registry remains on 5000 and Python frontend on 8502. To run Compose alongside them:
+
+```powershell
+docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml up -d --build --wait mlflow
+uv run python src/food11/migrate_registry.py
+docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml up -d --build --wait
+```
+
+The override publishes the Compose registry on 5001 and frontend on 8503. Migration copies the actual trained champion and its metrics into the separate Compose registry, recording its original run/version as provenance tags. It does not retrain or replace the original training registry.

@@ -38,3 +38,5 @@ Champion version 1 scored 73.1752% on 1,096 evaluation images. The two-standard-
 - Version 3 (run 922730140356497eb64f4cf134c96b8a): accuracy 73.1752%; decision `set_as_challenger`.
 
 Both failed to exceed the required threshold. Champion remains version 1; challenger now points to version 3. The actual mini-data duplicate experiment exited 1 as expected and its temporary copy was removed; see duplicate_check.txt.
+
+Repeated successful pushes also measured uv sync at 22.0 seconds in run 43227447188 and 23.0 seconds in run 43230779593. See cache_comparison.json. Whole-workflow timings are not directly comparable because later smoke checks also build the supporting images, exercise Compose persistence and measure the single-stage baseline; cache reuse does not guarantee every later wall-clock measurement is shorter.

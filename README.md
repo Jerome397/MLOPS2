@@ -40,7 +40,7 @@ uv run dvc push
 Start MLflow in a separate terminal:
 
 ```powershell
-uv run mlflow server --host 127.0.0.1 --port 5000 --workers 1 --backend-store-uri sqlite:///mlflow.db --serve-artifacts --artifacts-destination ./mlruns
+uv run mlflow server --host 127.0.0.1 --port 5000 --workers 1 --backend-store-uri sqlite:///mlflow.db --serve-artifacts --artifacts-destination ./mlruns --allowed-hosts localhost:5000,127.0.0.1:5000,host.docker.internal:5000
 ```
 
 Then train, register, serve:
@@ -98,3 +98,14 @@ After the champion is registered, run `powershell -ExecutionPolicy Bypass -File 
 It starts localhost-only MLflow (5000), API (8000) and frontend (8502), leaving
 existing listeners alone. Port 8501 belongs to another project on this laptop.
 Logs are under ignored `logs/`. Docker Compose remains the container deployment.
+
+To also run Docker alongside the standalone services, use the supplied local override:
+
+```powershell
+docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml up -d --build --wait mlflow
+uv run python src/food11/migrate_registry.py
+docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml up -d --build --wait
+```
+
+This uses localhost:5001 for the Compose registry and localhost:8503 for its frontend.
+Migration preserves the source run/version in tags and leaves the training server on 5000 intact.

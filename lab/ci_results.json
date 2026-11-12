@@ -1,27 +1,32 @@
 {
-  "run_url": "https://github.com/Jerome397/MLOPS2/actions/runs/43229215608",
-  "sha": "92549711ec770a4fb6013d82db92cf1aecda67fc",
+  "run_url": "https://github.com/Jerome397/MLOPS2/actions/runs/43230779593",
+  "sha": "10e7fa649d185cca24be066cdab06903e935ab4c",
   "conclusion": "success",
   "jobs": [
     {
       "name": "test",
       "conclusion": "success",
-      "started_at": "2026-11-12T13:39:18Z",
-      "completed_at": "2026-11-12T13:39:58Z",
-      "seconds": 40.0
+      "started_at": "2026-11-12T13:48:13Z",
+      "completed_at": "2026-11-12T13:48:47Z",
+      "seconds": 34.0
     },
     {
       "name": "smoke",
       "conclusion": "success",
-      "started_at": "2026-11-12T13:40:04Z",
-      "completed_at": "2026-11-12T13:45:29Z",
-      "seconds": 325.0
+      "started_at": "2026-11-12T13:48:49Z",
+      "completed_at": "2026-11-12T13:56:10Z",
+      "seconds": 441.0
     },
     {
       "name": "push",
       "conclusion": "skipped",
-      "started_at": "2026-11-12T13:45:30Z",
-      "completed_at": "2026-11-12T13:45:29Z"
+      "started_at": "2026-11-12T13:56:11Z",
+      "completed_at": "2026-11-12T13:56:10Z"
     }
-  ]
+  ],
+  "image_sizes_bytes": {
+    "multi_stage": 474181801,
+    "single_stage": 934935947,
+    "saved": 460754146
+  }
 }

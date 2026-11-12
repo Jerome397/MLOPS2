@@ -1,0 +1,8 @@
+# Run alongside the standalone localhost training server and another app on 8501.
+services:
+  mlflow:
+    ports: !override
+      - "127.0.0.1:5001:5000"
+  frontend:
+    ports: !override
+      - "127.0.0.1:8503:8501"
