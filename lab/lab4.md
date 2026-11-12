@@ -37,3 +37,5 @@ docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml 
 ```
 
 The override publishes the Compose registry on 5001 and frontend on 8503. Migration copies the actual trained champion and its metrics into the separate Compose registry, recording its original run/version as provenance tags. It does not retrain or replace the original training registry.
+
+The real local stack passed the same lifecycle checks after migration: a frontend-container request returned Bread at 96.8192% confidence; moving champion to version 2 and restarting inference preserved prediction; down/up retained the alias, artifacts and prediction. See compose_local.json. The local MLflow allowlist includes both 5000 and 5001 so the supplied port override works.

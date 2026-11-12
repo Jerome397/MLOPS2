@@ -17,3 +17,5 @@ The API has no import-time model download. Startup loads exactly once, tests can
 Implementation references: [MLflow artifact proxying](https://mlflow.org/docs/latest/self-hosting/architecture/tracking-server/), [PyTorch model logging](https://mlflow.org/docs/latest/api_reference/python_api/mlflow.pytorch.html), and [uv dependency-layer caching](https://docs.astral.sh/uv/guides/integration/docker/).
 
 Measured in [CI run 43230779593](https://github.com/Jerome397/MLOPS2/actions/runs/43230779593): Docker reported 474,181,801 bytes for the multi-stage image and 934,935,947 bytes for the single-stage baseline: a reduction of 460,754,146 bytes (49.28%).
+
+The real standalone container also passed locally: it loaded the trained champion through host.docker.internal:5000 and returned Bread at 96.8192% confidence. Removing/recreating that disposable container from the same image repeated the prediction without rebuilding (lab3_local.json).

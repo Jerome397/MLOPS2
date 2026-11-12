@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "frontend_url": "http://127.0.0.1:8503",
+  "mlflow_url": "http://127.0.0.1:5001",
+  "original_version": "1",
+  "reloaded_version": "2",
+  "first_prediction": {
+    "category": "Bread",
+    "confidence": 0.9681918743673488
+  },
+  "after_restart": {
+    "category": "Bread",
+    "confidence": 0.9681918743673488
+  },
+  "after_down_up": {
+    "category": "Bread",
+    "confidence": 0.9681918743673488
+  },
+  "registry_provenance": {
+    "mlflow.user": "user",
+    "mlflow.source.name": "src/food11/migrate_registry.py",
+    "mlflow.source.type": "LOCAL",
+    "mlflow.source.git.commit": "47db9a992ccee0717c0251e543b84835022cbb2a",
+    "mlflow.source.git.branch": "repair/lab5-protection-demo",
+    "mlflow.source.git.repoURL": "https://github.com/Jerome397/MLOPS2.git",
+    "mlflow.runName": "adorable-kite-695",
+    "source_run_id": "48a88dead297420dbe52bdf7f58d4ee8",
+    "source_model_version": "1",
+    "source_tracking_uri": "http://127.0.0.1:5000",
+    "purpose": "trained champion migration"
+  },
+  "volume_preserved": true
+}

@@ -17,13 +17,23 @@
 - GitHub main requires PRs and test/smoke checks. PR #1 deliberately failed, showed a blocked merge, then was fixed (branch_protection.json).
 - GitHub built the API, MLflow and frontend images, verified real HTTP prediction with a synthetic smoke model, moved its champion alias, restarted inference and verified persistence through Compose down/up. [Successful run](https://github.com/Jerome397/MLOPS2/actions/runs/43229215608): test 40 seconds; smoke 325 seconds. See ci_results.json. Publication is restricted to successful main pushes.
 
+## Real local container checks
+
+- Standalone Lab 3 container loaded the real champion through host.docker.internal:5000 and predicted Bread with confidence 0.9681918744. A newly recreated container produced the same result without rebuilding (lab3_local.json).
+- All three local Compose services became healthy. The frontend container reached private inference and predicted Bread with the same confidence.
+- Compose champion moved from registered version 1 to version 2, inference restarted without rebuilding, and prediction succeeded again.
+- A complete `docker compose down` / `up` cycle preserved the named volume, version-2 alias and real prediction (compose_local.json).
+- The port-5001 MLflow Host-header mismatch found during migration was corrected with an explicit localhost:5001 allowlist entry.
+
 ## Local services
 
 Run `powershell -ExecutionPolicy Bypass -File scripts/start_local.ps1`. It starts one localhost MLflow worker, waits for readiness, starts inference and then the frontend. Existing listeners are left unchanged.
 
 - MLflow: http://127.0.0.1:5000
 - API documentation: http://127.0.0.1:8000/docs
-- Frontend: http://127.0.0.1:8502 (8501 already belongs to another project)
+- Python frontend: http://127.0.0.1:8502 (8501 already belongs to another project)
+- Docker Compose frontend: http://127.0.0.1:8503
+- Docker Compose registry: http://127.0.0.1:5001
 
 ## Docker recovery
 
