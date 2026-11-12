@@ -109,3 +109,10 @@ docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml 
 
 This uses localhost:5001 for the Compose registry and localhost:8503 for its frontend.
 Migration preserves the source run/version in tags and leaves the training server on 5000 intact.
+
+The publish job also pulls its exact GHCR SHA tag and exports a one-day Actions
+artifact named `food11-image-<sha>`. If your local Git login lacks GHCR's separate
+`read:packages` scope, download that artifact with repository access, unzip it,
+and run `docker load -i food11-image.tar.gz`. It contains the same registry image,
+without model weights or datasets. Direct private-registry pulls require a GitHub
+login/token with `read:packages`; no persistent credential is created by this project.

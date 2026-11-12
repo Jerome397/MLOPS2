@@ -88,3 +88,13 @@ jobs:
           tags: ghcr.io/jerome397/mlops2:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Pull the published SHA and export a portable image
+        run: |
+          docker pull ghcr.io/jerome397/mlops2:${{ github.sha }}
+          docker save ghcr.io/jerome397/mlops2:${{ github.sha }} | gzip > food11-image.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: food11-image-${{ github.sha }}
+          path: food11-image.tar.gz
+          compression-level: 0
+          retention-days: 1
