@@ -31,8 +31,33 @@ jobs:
           done
           docker logs api
           exit 1
+      - name: Build supporting Compose images
+        run: |
+          docker build -t food11-mlflow:ci mlflow
+          docker build -t food11-frontend:ci frontend
+      - name: Verify Compose artifact loading, predictions and persistence
+        env:
+          COMPOSE_FILE: docker-compose.yml:tests/integration/compose.ci.yml
+          COMPOSE_PROJECT_NAME: food11-ci
+        run: |
+          docker compose up -d --no-build --wait mlflow
+          docker compose run --rm --no-deps -T --entrypoint python inference /checks/seed_registry.py
+          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose exec -T inference python /checks/check_stack.py
+          docker compose exec -T inference python /checks/advance_alias.py
+          docker compose restart inference
+          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose exec -T inference python /checks/check_stack.py
+          docker compose down
+          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose exec -T inference python /checks/check_stack.py
+      - if: failure()
+        run: docker compose -p food11-ci -f docker-compose.yml -f tests/integration/compose.ci.yml logs
       - if: always()
-        run: docker rm -f api || true
+        run: |
+          docker rm -f api || true
+          docker compose -p food11-ci -f docker-compose.yml -f tests/integration/compose.ci.yml down -v
+
   push:
     needs: smoke
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
