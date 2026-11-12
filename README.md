@@ -1,4 +1,4 @@
-# Food-11 MLOps — Labs 1–5
+# Food-11 MLOps â€” Labs 1â€“5
 
 Repaired project for Jerome397/MLOPS2. Data and trained models stay outside Git.
 
@@ -18,7 +18,7 @@ to avoid OneDrive hardlink errors.
 ## Data
 
 `data/food11_raw/{training,validation,evaluation}` preserves original images.
-`data/food11_processed` has RGB 128×128 ImageFolder data. The mini dataset has
+`data/food11_processed` has RGB 128Ã—128 ImageFolder data. The mini dataset has
 up to 100 images per class per split. Cross-split duplicates are excluded from
 processed data, preserving evaluation before validation before training.
 See `lab/data_preparation.json` for counts and excluded paths.
@@ -89,5 +89,5 @@ uv run python src/food11/promote.py --version <candidate-version>
 The promotion gate checks logged dataset fingerprints/test sizes and requires
 candidate accuracy >= champion accuracy + two binomial standard errors.
 Decisions are written as model-version tags. Run it where MLflow and evaluation
-data are accessible. See `lab/lab1.md`–`lab/lab5.md` and `lab/verification.md`
+data are accessible. See `lab/lab1.md`â€“`lab/lab5.md` and `lab/verification.md`
 for answers, measured results and machine-specific limitations.
