@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 import argparse
 import math
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import mlflow
-from mlflow import MlflowClient
+if TYPE_CHECKING:
+    from mlflow import MlflowClient
 
 MODEL_NAME = "food11"
 
@@ -75,6 +78,8 @@ def parse_args():
 
 
 def main():
+    import mlflow
+    from mlflow import MlflowClient
 
     args = parse_args()
 

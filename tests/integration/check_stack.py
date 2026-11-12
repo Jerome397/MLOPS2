@@ -15,7 +15,7 @@ assert int(champion.version) >= 1
 assert requests.get("http://mlflow:5000/health", timeout=10).status_code == 200
 assert requests.get("http://frontend:8501/_stcore/health", timeout=10).status_code == 200
 assert requests.get("http://inference:8000/health", timeout=10).json() == {"status": "ok"}
-with Path("/checks/bread.jpg").open("rb") as image:
+with Path("/fixtures/bread.jpg").open("rb") as image:
     response = requests.post("http://inference:8000/predict", files={"file": image}, timeout=60)
 response.raise_for_status()
 body = response.json()

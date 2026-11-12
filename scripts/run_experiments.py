@@ -11,10 +11,6 @@ sys.stdout.reconfigure(encoding="utf-8")
 import mlflow
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 client = mlflow.MlflowClient()
-# A completed first experiment hit a Windows console-encoding error only at exit.
-run = client.get_run("f0f2053e381b4cdfb5930621cc25072d")
-if run.info.status == "RUNNING" and "test_accuracy" in run.data.metrics:
-    client.set_terminated(run.info.run_id, "FINISHED")
 settings = [(0.01,32), (0.001,32), (0.0001,32), (0.001,64)]
 comparison=[]
 for lr, batch in settings:

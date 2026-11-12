@@ -40,7 +40,7 @@ uv run dvc push
 Start MLflow in a separate terminal:
 
 ```powershell
-uv run mlflow server --host 127.0.0.1 --port 5000 --backend-store-uri sqlite:///mlflow.db --serve-artifacts --artifacts-destination ./mlruns
+uv run mlflow server --host 127.0.0.1 --port 5000 --workers 1 --backend-store-uri sqlite:///mlflow.db --serve-artifacts --artifacts-destination ./mlruns
 ```
 
 Then train, register, serve:
@@ -91,3 +91,10 @@ candidate accuracy >= champion accuracy + two binomial standard errors.
 Decisions are written as model-version tags. Run it where MLflow and evaluation
 data are accessible. See `lab/lab1.md`–`lab/lab5.md` and `lab/verification.md`
 for answers, measured results and machine-specific limitations.
+
+## Local startup on this laptop
+
+After the champion is registered, run `powershell -ExecutionPolicy Bypass -File scripts/start_local.ps1`.
+It starts localhost-only MLflow (5000), API (8000) and frontend (8502), leaving
+existing listeners alone. Port 8501 belongs to another project on this laptop.
+Logs are under ignored `logs/`. Docker Compose remains the container deployment.

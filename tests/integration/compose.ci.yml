@@ -5,6 +5,6 @@ services:
     image: food11-api:ci
     volumes:
       - ./tests/integration:/checks:ro
-      - ./tests/fixtures/bread.jpg:/checks/bread.jpg:ro
+      - ./tests/fixtures/bread.jpg:/fixtures/bread.jpg:ro
   frontend:
     image: food11-frontend:ci
