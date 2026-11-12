@@ -11,3 +11,5 @@ __pycache__/
 logs/
 lab4_model_export/
 .env
+*.db-journal
+.artifacts/

@@ -1,0 +1,12 @@
+{
+  "mlflow_health": 200,
+  "api_health": {
+    "status": "ok"
+  },
+  "frontend_health": 200,
+  "uploaded_image": "tests/fixtures/bread.jpg",
+  "prediction": {
+    "category": "Bread",
+    "confidence": 0.9681918778450691
+  }
+}

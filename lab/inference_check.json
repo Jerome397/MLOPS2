@@ -1,0 +1,11 @@
+{
+  "registry_uri": "models:/food11@champion",
+  "version": "1",
+  "run_id": "48a88dead297420dbe52bdf7f58d4ee8",
+  "image": "data\\food11_processed_mini\\validation\\Bread\\0_0.jpg",
+  "response": {
+    "category": "Fried food",
+    "confidence": 0.4489616067418728
+  },
+  "status": "PASS"
+}

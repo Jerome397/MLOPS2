@@ -1,0 +1,13 @@
+PASS - training folders: 11 class folders
+PASS - validation folders: 11 class folders
+PASS - evaluation folders: 11 class folders
+PASS - image format: 3293 images checked
+PASS - minimum images per class: minimum=50
+Duplicate across splits: data\food11_processed_mini\training\Bread\0_0.jpg <-> data\food11_processed_mini\evaluation\Bread\lab5_duplicate.jpg
+FAIL - no duplicates across splits
+PASS - training/validation distribution: tau=0.05
+
+Dataset contract: FAIL
+
+Exit code: 1 (expected)
+Temporary duplicate removed in finally.

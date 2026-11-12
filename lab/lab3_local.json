@@ -1,0 +1,13 @@
+{
+  "health": "PASS",
+  "prediction": {
+    "category": "Bread",
+    "confidence": 0.9681918743673488
+  },
+  "mlflow_uri": "http://host.docker.internal:5000",
+  "new_container_prediction": {
+    "category": "Bread",
+    "confidence": 0.9681918743673488
+  },
+  "recreated_without_rebuild": true
+}

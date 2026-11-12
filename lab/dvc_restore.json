@@ -1,0 +1,10 @@
+{
+  "fresh_clone": "C:\\Users\\user\\AppData\\Local\\Temp\\food11-restore-4zfdyu_y",
+  "data_absent_before_pull": true,
+  "counts_after_pull": {
+    "food11_raw": 16643,
+    "food11_processed": 16032,
+    "food11_processed_mini": 3292
+  },
+  "result": "PASS"
+}

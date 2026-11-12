@@ -1,0 +1,14 @@
+{
+  "raw_commit": "a70594a7064b4b8b7aa429ca37c8cba82ddefc18",
+  "processed_commit": "c5e12661770ce8bbbeda1fa5152bec4370830b7f",
+  "after_raw_checkout": [
+    "food11_raw"
+  ],
+  "after_processed_checkout": [
+    "food11_processed",
+    "food11_processed_mini",
+    "food11_raw"
+  ],
+  "scope": "temporary verification clone only; working dataset untouched",
+  "result": "PASS"
+}

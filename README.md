@@ -1,4 +1,4 @@
-# Food-11 MLOps — Labs 1–5
+# Food-11 MLOps â€” Labs 1â€“5
 
 Repaired project for Jerome397/MLOPS2. Data and trained models stay outside Git.
 
@@ -18,7 +18,7 @@ to avoid OneDrive hardlink errors.
 ## Data
 
 `data/food11_raw/{training,validation,evaluation}` preserves original images.
-`data/food11_processed` has RGB 128×128 ImageFolder data. The mini dataset has
+`data/food11_processed` has RGB 128Ã—128 ImageFolder data. The mini dataset has
 up to 100 images per class per split. Cross-split duplicates are excluded from
 processed data, preserving evaluation before validation before training.
 See `lab/data_preparation.json` for counts and excluded paths.
@@ -40,7 +40,7 @@ uv run dvc push
 Start MLflow in a separate terminal:
 
 ```powershell
-uv run mlflow server --host 127.0.0.1 --port 5000 --backend-store-uri sqlite:///mlflow.db --serve-artifacts --artifacts-destination ./mlruns
+uv run mlflow server --host 127.0.0.1 --port 5000 --workers 1 --backend-store-uri sqlite:///mlflow.db --serve-artifacts --artifacts-destination ./mlruns --allowed-hosts localhost:5000,127.0.0.1:5000,host.docker.internal:5000
 ```
 
 Then train, register, serve:
@@ -89,5 +89,30 @@ uv run python src/food11/promote.py --version <candidate-version>
 The promotion gate checks logged dataset fingerprints/test sizes and requires
 candidate accuracy >= champion accuracy + two binomial standard errors.
 Decisions are written as model-version tags. Run it where MLflow and evaluation
-data are accessible. See `lab/lab1.md`–`lab/lab5.md` and `lab/verification.md`
+data are accessible. See `lab/lab1.md`â€“`lab/lab5.md` and `lab/verification.md`
 for answers, measured results and machine-specific limitations.
+
+## Local startup on this laptop
+
+After the champion is registered, run `powershell -ExecutionPolicy Bypass -File scripts/start_local.ps1`.
+It starts localhost-only MLflow (5000), API (8000) and frontend (8502), leaving
+existing listeners alone. Port 8501 belongs to another project on this laptop.
+Logs are under ignored `logs/`. Docker Compose remains the container deployment.
+
+To also run Docker alongside the standalone services, use the supplied local override:
+
+```powershell
+docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml up -d --build --wait mlflow
+uv run python src/food11/migrate_registry.py
+docker compose -p food11-labs -f docker-compose.yml -f docker-compose.local.yml up -d --build --wait
+```
+
+This uses localhost:5001 for the Compose registry and localhost:8503 for its frontend.
+Migration preserves the source run/version in tags and leaves the training server on 5000 intact.
+
+The publish job also pulls its exact GHCR SHA tag and exports a one-day Actions
+artifact named `food11-image-<sha>`. If your local Git login lacks GHCR's separate
+`read:packages` scope, download that artifact with repository access, unzip it,
+and run `docker load -i food11-image.tar.gz`. It contains the same registry image,
+without model weights or datasets. Direct private-registry pulls require a GitHub
+login/token with `read:packages`; no persistent credential is created by this project.

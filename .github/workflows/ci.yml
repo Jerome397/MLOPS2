@@ -12,6 +12,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          version: "0.12.13"
       - run: uv sync --frozen
       - run: uv run ruff check src tests frontend
       - run: uv run pytest -q
@@ -21,6 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t food11-api:ci .
+      - name: Measure single-stage versus multi-stage images
+        run: |
+          docker build -f .github/Dockerfile.single-stage -t food11-api:single .
+          docker image inspect food11-api:ci food11-api:single --format '{{.RepoTags}} {{.Size}} bytes'
+          docker history food11-api:ci
+          multi=$(docker image inspect food11-api:ci --format '{{.Size}}')
+          single=$(docker image inspect food11-api:single --format '{{.Size}}')
+          echo "Multi-stage: $multi bytes; single-stage: $single bytes; saved: $((single-multi)) bytes" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Start container and probe health
         run: |
           docker run -d --name api -p 8000:8000 -e SKIP_MODEL=1 food11-api:ci
@@ -30,8 +39,33 @@ jobs:
           done
           docker logs api
           exit 1
+      - name: Build supporting Compose images
+        run: |
+          docker build -t food11-mlflow:ci mlflow
+          docker build -t food11-frontend:ci frontend
+      - name: Verify Compose artifact loading, predictions and persistence
+        env:
+          COMPOSE_FILE: docker-compose.yml:tests/integration/compose.ci.yml
+          COMPOSE_PROJECT_NAME: food11-ci
+        run: |
+          docker compose up -d --no-build --wait mlflow
+          docker compose run --rm --no-deps -T --entrypoint python inference /checks/seed_registry.py
+          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose exec -T inference python /checks/check_stack.py
+          docker compose exec -T inference python /checks/advance_alias.py
+          docker compose restart inference
+          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose exec -T inference python /checks/check_stack.py
+          docker compose down
+          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose exec -T inference python /checks/check_stack.py
+      - if: failure()
+        run: docker compose -p food11-ci -f docker-compose.yml -f tests/integration/compose.ci.yml logs
       - if: always()
-        run: docker rm -f api || true
+        run: |
+          docker rm -f api || true
+          docker compose -p food11-ci -f docker-compose.yml -f tests/integration/compose.ci.yml down -v
+
   push:
     needs: smoke
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -54,3 +88,13 @@ jobs:
           tags: ghcr.io/jerome397/mlops2:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Pull the published SHA and export a portable image
+        run: |
+          docker pull ghcr.io/jerome397/mlops2:${{ github.sha }}
+          docker save ghcr.io/jerome397/mlops2:${{ github.sha }} | gzip > food11-image.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: food11-image-${{ github.sha }}
+          path: food11-image.tar.gz
+          compression-level: 0
+          retention-days: 1

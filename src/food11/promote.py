@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 import argparse
 import math
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import mlflow
-from mlflow import MlflowClient
+if TYPE_CHECKING:
+    from mlflow import MlflowClient
 
 MODEL_NAME = "food11"
 
@@ -44,6 +47,16 @@ def get_accuracy(
     return float(metrics["test_accuracy"])
 
 
+def promotion_gate(champion_accuracy: float, candidate_accuracy: float, n: int):
+    if n <= 0 or not all(
+        math.isfinite(a) and 0 <= a <= 1 for a in [champion_accuracy, candidate_accuracy]
+    ):
+        raise ValueError("Valid accuracies and a positive test size are required")
+    margin = 2 * math.sqrt(champion_accuracy * (1 - champion_accuracy) / n)
+    threshold = champion_accuracy + margin
+    return candidate_accuracy >= threshold, margin, threshold
+
+
 def parse_args():
 
     parser = argparse.ArgumentParser()
@@ -65,6 +78,8 @@ def parse_args():
 
 
 def main():
+    import mlflow
+    from mlflow import MlflowClient
 
     args = parse_args()
 
@@ -111,15 +126,9 @@ def main():
     if n <= 0:
         raise RuntimeError("Test dataset is empty.")
 
-    p = champion_accuracy
+    passed, margin, threshold = promotion_gate(champion_accuracy, candidate_accuracy, n)
 
-    standard_error = math.sqrt(p * (1 - p) / n)
-
-    margin = 2 * standard_error
-
-    threshold = champion_accuracy + margin
-
-    if candidate_accuracy >= threshold:
+    if passed:
         decision = "promoted_to_champion"
 
         client.set_registered_model_alias(
